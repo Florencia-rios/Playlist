@@ -4,13 +4,13 @@ import com.music.playlist.controller.PlaylistController;
 import com.music.playlist.model.Playlist;
 import com.music.playlist.model.RequestForCreatePlaylist;
 import com.music.playlist.model.RequestForUpdatePlaylist;
+import com.music.playlist.model.ResponseForGetPlaylists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,7 +30,7 @@ public class PlaylistRestController {
     }
 
     @GetMapping("/get-playlists/{songId}")
-    ResponseEntity<List<Playlist>> getPlaylistsBySong(@PathParam("songId") Long songId) {
+    ResponseEntity<ResponseForGetPlaylists> getPlaylistsBySong(@PathVariable("songId") Long songId) {
         return new ResponseEntity<>(playlistController.getPlaylistsBySong(songId), HttpStatus.OK);
     }
 

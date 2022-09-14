@@ -4,6 +4,7 @@ import com.music.playlist.model.Playlist;
 import com.music.playlist.model.Song;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,22 @@ public class PlaylistRepository {
     public Playlist save(Playlist playlist){ return playlist; };
 
     public Playlist findById(UUID id) {
-        return null;
+
+        Playlist playlist = new Playlist();
+
+        List<Song> songs = new ArrayList<>();
+        Song song = new Song();
+        song.setId(1L);
+        song.setAlbum("Album1");
+        song.setArtist("Artista1");
+        song.setTitle("Title1");
+        songs.add(song);
+
+        playlist.setId(id);
+        playlist.setName("Lista1");
+        playlist.setSongs(songs);
+
+        return playlist;
     }
 
     /**
