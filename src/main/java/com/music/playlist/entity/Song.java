@@ -1,4 +1,4 @@
-package com.music.playlist.model;
+package com.music.playlist.entity;
 
 import lombok.Getter;
 import lombok.Setter;

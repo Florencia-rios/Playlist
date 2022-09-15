@@ -1,9 +1,10 @@
 package com.music.playlist.restcontroller;
 
 import com.music.playlist.controller.PlaylistController;
-import com.music.playlist.model.Playlist;
-import com.music.playlist.model.RequestForCreatePlaylist;
-import com.music.playlist.model.ResponseForGetPlaylists;
+import com.music.playlist.model.request.RequestForCreatePlaylist;
+import com.music.playlist.model.request.RequestForUpdatePlaylist;
+import com.music.playlist.model.response.ResponseForGetPlaylists;
+import com.music.playlist.model.response.ResponsePlaylist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,19 @@ public class PlaylistRestController {
     PlaylistController playlistController;
 
     @PostMapping("/create-playlist")
-    ResponseEntity<Playlist> createPlaylist(@RequestBody RequestForCreatePlaylist request) {
-        return new ResponseEntity<>(playlistController.createPlaylist(request.getName(), request.getSongs()), HttpStatus.OK);
+    ResponseEntity<ResponsePlaylist> createPlaylist(@RequestBody RequestForCreatePlaylist request) {
+        return new ResponseEntity<>(playlistController.createPlaylist(request.getName(), request.getSongIds()), HttpStatus.OK);
     }
 
-  /*  @PutMapping("/update-playlist")
-    ResponseEntity<Playlist> updatePlaylist(@RequestBody RequestForUpdatePlaylist request) {
-        return new ResponseEntity<>(playlistController.updatePlaylist(request.getId(), request.getSongs(), request.getFlag()), HttpStatus.OK);
-    }*/
+    @PutMapping("/add-songs")
+    ResponseEntity<ResponsePlaylist> addSongs(@RequestBody RequestForUpdatePlaylist request) {
+        return new ResponseEntity<>(playlistController.addSongs(request.getId(), request.getSongIds()), HttpStatus.OK);
+    }
+
+    @PutMapping("/remove-songs")
+    ResponseEntity<ResponsePlaylist> removeSongs(@RequestBody RequestForUpdatePlaylist request) {
+        return new ResponseEntity<>(playlistController.removeSongs(request.getId(), request.getSongIds()), HttpStatus.OK);
+    }
 
     @GetMapping("/get-playlists/{songId}")
     ResponseEntity<ResponseForGetPlaylists> getPlaylistsBySong(@PathVariable("songId") Long songId) {

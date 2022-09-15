@@ -1,11 +1,11 @@
 package com.music.playlist.restcontroller;
 
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.music.playlist.model.Playlist;
-import com.music.playlist.model.RequestForCreatePlaylist;
-import com.music.playlist.model.RequestForUpdatePlaylist;
-import com.music.playlist.model.Song;
+import com.music.playlist.model.request.RequestForCreatePlaylist;
+import com.music.playlist.model.request.RequestForUpdatePlaylist;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,8 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,31 +29,19 @@ public class PlaylistRestcontrollerTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    public void whenGetPlaylistBySongIdThenReturnOk() throws Exception {
-        // set up
-        List<Playlist> playlists = new ArrayList<>();
 
-        Playlist playlist = createPlaylist();
 
-        playlists.add(playlist);
-
-        // Mock
-        this.mockMvc.perform(get("/get-playlists/{songId}", 1L)).andDo(print()).andExpect(status().isOk());
-
-    }
-
+    @Order(1)
     @Test
     public void whenCreatePlaylistThenReturnPlaylist() throws Exception {
         // set up
         RequestForCreatePlaylist request = new RequestForCreatePlaylist();
 
-        List<Song> songs = new ArrayList<>();
-        Song song = createSong();
-        songs.add(song);
+        List<Long> songIds = new ArrayList<>();
+        songIds.add(1L);
 
         request.setName("Lista1");
-        request.setSongs(songs);
+        request.setSongIds(songIds);
 
         // Mock
         this.mockMvc.perform(post("/create-playlist").contentType(MediaType.APPLICATION_JSON).content(toJson(request))).andDo(print()).andExpect(status().isOk())
@@ -62,45 +49,58 @@ public class PlaylistRestcontrollerTests {
 
     }
 
-    // TODO falta terminarlo
+    @Order(2)
     @Test
-    public void whenUpdatePlaylistThenReturnPlaylistModified() throws Exception {
+    public void whenAddSongsToPlaylistThenReturnPlaylistModified() throws Exception {
         // set up
         RequestForUpdatePlaylist request = new RequestForUpdatePlaylist();
 
-        Playlist playlist = createPlaylist();
+        List<Long> songIds = new ArrayList<>();
+        songIds.add(2L);
+
+        request.setId(1L);
+        request.setSongIds(songIds);
 
 
         // Mock
-        this.mockMvc.perform(post("/update-playlist").contentType(MediaType.APPLICATION_JSON).content(toJson(playlist))).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(put("/add-songs").contentType(MediaType.APPLICATION_JSON).content(toJson(request))).andDo(print()).andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Lista1"));
 
     }
 
-    private Playlist createPlaylist() {
-        Playlist playlist = new Playlist();
+    @Order(3)
+    @Test
+    public void whenRemoveSongsToPlaylistThenReturnPlaylistModified() throws Exception {
+        // set up
+        RequestForUpdatePlaylist request = new RequestForUpdatePlaylist();
 
-        Long id = 1L;
+        List<Long> songIds = new ArrayList<>();
+        songIds.add(2L);
 
-        List<Song> songs = new ArrayList<>();
-        Song song = createSong();
-        songs.add(song);
+        request.setId(1L);
+        request.setSongIds(songIds);
 
-        playlist.setId(id);
-        playlist.setName("Lista1");
-     //   playlist.setSongs(songs);
 
-        return playlist;
+        // Mock
+        this.mockMvc.perform(put("/remove-songs").contentType(MediaType.APPLICATION_JSON).content(toJson(request))).andDo(print()).andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Lista1"));
+
     }
 
-    private Song createSong() {
-        Song song = new Song();
-        song.setId(1L);
-        song.setAlbum("Album1");
-        song.setArtist("Artista1");
-        song.setTitle("Title1");
-        return song;
+    @Order(4)
+    @Test
+    public void whenGetPlaylistBySongIdThenReturnOk() throws Exception {
+
+        this.mockMvc.perform(get("/get-playlists/{songId}", 1L)).andDo(print()).andExpect(status().isOk());
     }
+
+    @Order(5)
+    @Test
+    public void whenDeletePlaylistThenReturn200() throws Exception {
+
+        this.mockMvc.perform(delete("/detele-playlist/{id}", 2L)).andDo(print()).andExpect(status().isOk());
+    }
+
 
     private static byte[] toJson(Object object) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

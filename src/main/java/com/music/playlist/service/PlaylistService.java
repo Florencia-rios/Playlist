@@ -1,10 +1,9 @@
 package com.music.playlist.service;
 
-import com.music.playlist.model.Playlist;
-import com.music.playlist.model.Song;
-import com.music.playlist.repository.PlaylistRepo;
+import com.music.playlist.entity.Playlist;
+import com.music.playlist.entity.Song;
 import com.music.playlist.repository.PlaylistRepository;
-import com.music.playlist.repository.SongRepo;
+import com.music.playlist.repository.SongRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,47 +16,58 @@ public class PlaylistService {
     PlaylistRepository playlistRepository;
 
     @Autowired
-    PlaylistRepo playlistRepos; //
+    private SongRepository songRepository;
 
-    @Autowired
-    private SongRepo songRepos; //
 
-    public Playlist createPlaylist(String name, List<Song> songs){
+    public Playlist createPlaylist(String name, List<Long> songIds){
         Playlist playlist = new Playlist();
         playlist.setName(name);
-        for (Song song: songs) {
+
+        System.out.println(songIds);
+        for (Long songId: songIds){
+            Song song = songRepository.findById(songId).orElseThrow();
             playlist.addSong(song);
         }
 
-        playlistRepos.save(playlist);
+        playlistRepository.save(playlist);
 
         return playlist;
     }
 
-  /*  public Playlist updatePlaylist(Long id, List<Song> songs, int flag) {
-        Playlist playlist = playlistRepository.findById(id);
-        List<Song> currentSongs = playlist.getSongs();
+    public Playlist addSongs(Long id, List<Long> songIds) {
+        Playlist playlist = playlistRepository.findById(id).orElseThrow();
 
-        if (flag == 0){ // agregar
-            songs.stream().filter(s -> currentSongs.add(s));
-        } else if (flag == 1){
-            songs.stream().filter(s -> currentSongs.remove(s));
+        for (Long songId: songIds){
+            Song song = songRepository.findById(songId).orElseThrow();
+            playlist.addSong(song);
         }
 
-        playlist.setSongs(currentSongs);
-
-        playlistRepository.updatePlaylist(id, currentSongs);
+        playlistRepository.save(playlist);
 
         return playlist;
-    }*/
+    }
+
+    public Playlist removeSongs(Long id, List<Long> songIds) {
+        Playlist playlist = playlistRepository.findById(id).orElseThrow();
+
+        for (Long songId: songIds){
+            Song song = songRepository.findById(songId).orElseThrow();
+            playlist.removeSong(song);
+        }
+
+        playlistRepository.save(playlist);
+
+        return playlist;
+    }
 
     public List<Playlist> getPlaylistsBySong(Long songId) {
-        Song song = songRepos.getById(songId);
-      //  System.out.println( song.getPlaylists().get(0));
+        Song song = songRepository.getById(songId);
+
         return song.getPlaylists();
     }
 
     public void detelePlaylist(Long id) {
-        playlistRepos.deleteById(id);
+        playlistRepository.deleteById(id);
     }
+
 }

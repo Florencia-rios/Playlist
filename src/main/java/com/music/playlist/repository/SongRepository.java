@@ -1,36 +1,9 @@
 package com.music.playlist.repository;
 
-import com.music.playlist.model.Playlist;
-import com.music.playlist.model.Song;
+import com.music.playlist.entity.Song;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//@Repository
-public class SongRepository {
-
-    public List<Playlist> findById(Long songId) {
-
-        List<Playlist> playlists = new ArrayList<>();
-
-        Playlist playlist = new Playlist();
-
-        Long id = 1L;
-
-        List<Song> songs = new ArrayList<>();
-        Song song = new Song();
-        song.setId(songId);
-        song.setAlbum("Album1");
-        song.setArtist("Artista1");
-        song.setTitle("Title1");
-        songs.add(song);
-
-        playlist.setId(id);
-        playlist.setName("Lista1");
-       // playlist.setSongs(songs);
-
-        playlists.add(playlist);
-
-        return playlists;
-    }
+@Repository
+public interface SongRepository extends JpaRepository<Song, Long> {
 }

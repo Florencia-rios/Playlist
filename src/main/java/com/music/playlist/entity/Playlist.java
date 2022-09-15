@@ -1,4 +1,4 @@
-package com.music.playlist.model;
+package com.music.playlist.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,6 @@ import java.util.List;
 @Table(name = "PLAYLIST")
 @Getter
 @Setter
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
 public class Playlist {
 
     @Id
@@ -27,7 +26,10 @@ public class Playlist {
             joinColumns = @JoinColumn(name = "FK_PLAYLIST", nullable = false),
             inverseJoinColumns = @JoinColumn(name="FK_SONG", nullable = false)
     )
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
     List<Song> songs = new ArrayList<>();
 
     public Playlist() {
