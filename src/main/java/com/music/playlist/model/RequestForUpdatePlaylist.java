@@ -1,11 +1,10 @@
 package com.music.playlist.model;
 
 import java.util.List;
-import java.util.UUID;
 
 public class RequestForUpdatePlaylist {
 
-    private UUID id;
+    private Long id;
     private List<Song> songs;
     /**
      * Si es 0 => es para agregar y 1 => es para quitar
@@ -15,11 +14,11 @@ public class RequestForUpdatePlaylist {
     public RequestForUpdatePlaylist() {
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

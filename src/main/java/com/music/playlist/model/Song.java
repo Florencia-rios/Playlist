@@ -1,48 +1,36 @@
 package com.music.playlist.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name="SONG")
+@Getter
+@Setter
 public class Song {
 
+    @Id
+    @Column(name="ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name="TITLE", nullable = false)
     private String title;
+
+    @Column(name="ARTIST", nullable = false)
     private String artist;
+
+    @Column(name="ALBUM", nullable = false)
     private String album;
-    /**
-     * Relacion ManyToOne desde song a playlist
-     */
-    private Playlist playlist;
+
+    @ManyToMany(mappedBy = "songs")
+    private List<Playlist> playlists = new ArrayList<>();
 
     public Song() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    public String getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(String album) {
-        this.album = album;
-    }
 }

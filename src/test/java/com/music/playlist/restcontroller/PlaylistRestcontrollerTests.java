@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -81,7 +80,7 @@ public class PlaylistRestcontrollerTests {
     private Playlist createPlaylist() {
         Playlist playlist = new Playlist();
 
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
 
         List<Song> songs = new ArrayList<>();
         Song song = createSong();
@@ -89,7 +88,7 @@ public class PlaylistRestcontrollerTests {
 
         playlist.setId(id);
         playlist.setName("Lista1");
-        playlist.setSongs(songs);
+     //   playlist.setSongs(songs);
 
         return playlist;
     }

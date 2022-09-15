@@ -2,13 +2,11 @@ package com.music.playlist.repository;
 
 import com.music.playlist.model.Playlist;
 import com.music.playlist.model.Song;
-import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-@Repository
+//@Repository
 public class SongRepository {
 
     public List<Playlist> findById(Long songId) {
@@ -17,7 +15,7 @@ public class SongRepository {
 
         Playlist playlist = new Playlist();
 
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
 
         List<Song> songs = new ArrayList<>();
         Song song = new Song();
@@ -29,7 +27,7 @@ public class SongRepository {
 
         playlist.setId(id);
         playlist.setName("Lista1");
-        playlist.setSongs(songs);
+       // playlist.setSongs(songs);
 
         playlists.add(playlist);
 

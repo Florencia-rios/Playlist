@@ -1,41 +1,50 @@
 package com.music.playlist.model;
 
-import java.util.List;
-import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "PLAYLIST")
+@Getter
+@Setter
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
 public class Playlist {
 
-    private UUID id;
+    @Id
+    @Column(name="ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "NAME")
     private String name;
-    /**
-     * Relacion OneToMany desde Playlist a Song
-     */
-    private List<Song> songs;
+
+    @JoinTable(
+            name = "REL_PLAYLIST_SONG",
+            joinColumns = @JoinColumn(name = "FK_PLAYLIST", nullable = false),
+            inverseJoinColumns = @JoinColumn(name="FK_SONG", nullable = false)
+    )
+    @ManyToMany(cascade = CascadeType.ALL)
+    List<Song> songs = new ArrayList<>();
 
     public Playlist() {
     }
 
-    public UUID getId() {
-        return id;
+    public void addSong(Song song){
+        this.songs.add(song);
+        song.getPlaylists().add(this);
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void removeSong(Song song){
+        this.songs.remove(song);
+        song.getPlaylists().remove(this);
     }
 
     public List<Song> getSongs() {
-        return songs;
+        return this.songs;
     }
 
-    public void setSongs(List<Song> songs) {
-        this.songs = songs;
-    }
 }

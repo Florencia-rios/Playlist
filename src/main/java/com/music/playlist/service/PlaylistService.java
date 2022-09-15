@@ -2,15 +2,13 @@ package com.music.playlist.service;
 
 import com.music.playlist.model.Playlist;
 import com.music.playlist.model.Song;
+import com.music.playlist.repository.PlaylistRepo;
 import com.music.playlist.repository.PlaylistRepository;
-import com.music.playlist.repository.SongRepository;
+import com.music.playlist.repository.SongRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
-
-import static java.util.UUID.randomUUID;
 
 @Service
 public class PlaylistService {
@@ -19,19 +17,24 @@ public class PlaylistService {
     PlaylistRepository playlistRepository;
 
     @Autowired
-    SongRepository songRepository;
+    PlaylistRepo playlistRepos; //
+
+    @Autowired
+    private SongRepo songRepos; //
 
     public Playlist createPlaylist(String name, List<Song> songs){
-        UUID id = randomUUID();
         Playlist playlist = new Playlist();
-        playlist.setId(id);
         playlist.setName(name);
-        playlist.setSongs(songs);
+        for (Song song: songs) {
+            playlist.addSong(song);
+        }
 
-        return playlistRepository.save(playlist);
+        playlistRepos.save(playlist);
+
+        return playlist;
     }
 
-    public Playlist updatePlaylist(UUID id, List<Song> songs, int flag) {
+  /*  public Playlist updatePlaylist(Long id, List<Song> songs, int flag) {
         Playlist playlist = playlistRepository.findById(id);
         List<Song> currentSongs = playlist.getSongs();
 
@@ -46,13 +49,15 @@ public class PlaylistService {
         playlistRepository.updatePlaylist(id, currentSongs);
 
         return playlist;
-    }
+    }*/
 
     public List<Playlist> getPlaylistsBySong(Long songId) {
-       return songRepository.findById(songId);
+        Song song = songRepos.getById(songId);
+      //  System.out.println( song.getPlaylists().get(0));
+        return song.getPlaylists();
     }
 
-    public void detelePlaylist(UUID id) {
-        playlistRepository.deleteById(id);
+    public void detelePlaylist(Long id) {
+        playlistRepos.deleteById(id);
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.UUID;
 
 @Controller
 public class PlaylistController {
@@ -20,9 +19,9 @@ public class PlaylistController {
         return playlistService.createPlaylist(name, songs);
     }
 
-    public Playlist updatePlaylist(UUID id, List<Song> songs, int flag) {
+  /*  public Playlist updatePlaylist(Long id, List<Song> songs, int flag) {
         return playlistService.updatePlaylist(id, songs, flag);
-    }
+    }*/
 
     public ResponseForGetPlaylists getPlaylistsBySong(Long songId) {
         List<Playlist> playlists = playlistService.getPlaylistsBySong(songId);
@@ -33,7 +32,7 @@ public class PlaylistController {
         return responseForGetPlaylists;
     }
 
-    public void detelePlaylist(UUID id) {
+    public void detelePlaylist(Long id) {
         playlistService.detelePlaylist(id);
     }
 }

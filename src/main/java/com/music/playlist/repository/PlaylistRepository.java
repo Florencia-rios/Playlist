@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public class PlaylistRepository {
@@ -18,7 +17,7 @@ public class PlaylistRepository {
      */
     public Playlist save(Playlist playlist){ return playlist; };
 
-    public Playlist findById(UUID id) {
+    public Playlist findById(Long id) {
 
         Playlist playlist = new Playlist();
 
@@ -32,7 +31,7 @@ public class PlaylistRepository {
 
         playlist.setId(id);
         playlist.setName("Lista1");
-        playlist.setSongs(songs);
+       // playlist.setSongs(songs);
 
         return playlist;
     }
@@ -42,11 +41,11 @@ public class PlaylistRepository {
      * @param id
      * @param songs
      */
-    public void updatePlaylist(UUID id, List<Song> songs) {
+    public void updatePlaylist(Long id, List<Song> songs) {
         // hacer query para actualizar
     }
 
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         //hacer query para borrar
     }
 }
