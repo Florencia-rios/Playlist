@@ -5,18 +5,24 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.music.playlist.model.request.RequestForCreatePlaylist;
 import com.music.playlist.model.request.RequestForUpdatePlaylist;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -29,7 +35,8 @@ public class PlaylistRestcontrollerTests {
     @Autowired
     private MockMvc mockMvc;
 
-
+    @Autowired
+    UserRestcontroller userRestcontroller;
 
     @Order(1)
     @Test
@@ -43,8 +50,10 @@ public class PlaylistRestcontrollerTests {
         request.setName("Lista1");
         request.setSongIds(songIds);
 
-        // Mock
-        this.mockMvc.perform(post("/create-playlist").contentType(MediaType.APPLICATION_JSON).content(toJson(request))).andDo(print()).andExpect(status().isOk())
+        String token = getJWTToken("flor");
+
+        // mock
+        this.mockMvc.perform(post("/create-playlist").header("Authorization", token).contentType(MediaType.APPLICATION_JSON).content(toJson(request))).andDo(print()).andExpect(status().isOk())
                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Lista1"));
 
     }
@@ -61,9 +70,10 @@ public class PlaylistRestcontrollerTests {
         request.setId(1L);
         request.setSongIds(songIds);
 
+        String token = getJWTToken("flor");
 
-        // Mock
-        this.mockMvc.perform(put("/add-songs").contentType(MediaType.APPLICATION_JSON).content(toJson(request))).andDo(print()).andExpect(status().isOk())
+        // mock
+        this.mockMvc.perform(put("/add-songs").header("Authorization", token).contentType(MediaType.APPLICATION_JSON).content(toJson(request))).andDo(print()).andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Lista1"));
 
     }
@@ -80,9 +90,10 @@ public class PlaylistRestcontrollerTests {
         request.setId(1L);
         request.setSongIds(songIds);
 
+        String token = getJWTToken("flor");
 
-        // Mock
-        this.mockMvc.perform(put("/remove-songs").contentType(MediaType.APPLICATION_JSON).content(toJson(request))).andDo(print()).andExpect(status().isOk())
+        // mock
+        this.mockMvc.perform(put("/remove-songs").header("Authorization", token).contentType(MediaType.APPLICATION_JSON).content(toJson(request))).andDo(print()).andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Lista1"));
 
     }
@@ -91,14 +102,22 @@ public class PlaylistRestcontrollerTests {
     @Test
     public void whenGetPlaylistBySongIdThenReturnOk() throws Exception {
 
-        this.mockMvc.perform(get("/get-playlists/{songId}", 1L)).andDo(print()).andExpect(status().isOk());
+        // set up
+        String token = getJWTToken("flor");
+
+        // mock
+        this.mockMvc.perform(get("/get-playlists/{songId}", 1L).header("Authorization", token)).andDo(print()).andExpect(status().isOk());
     }
 
     @Order(5)
     @Test
     public void whenDeletePlaylistThenReturn200() throws Exception {
 
-        this.mockMvc.perform(delete("/detele-playlist/{id}", 2L)).andDo(print()).andExpect(status().isOk());
+        // set up
+        String token = getJWTToken("flor");
+
+        // mock
+        this.mockMvc.perform(delete("/detele-playlist/{id}", 2L).header("Authorization", token)).andDo(print()).andExpect(status().isOk());
     }
 
 
@@ -106,5 +125,26 @@ public class PlaylistRestcontrollerTests {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return mapper.writeValueAsBytes(object);
+    }
+
+    private String getJWTToken(String username) {
+        String secretKey = "mySecretKey";
+        List<GrantedAuthority> grantedAuthorities = AuthorityUtils
+                .commaSeparatedStringToAuthorityList("ROLE_USER");
+
+        String token = Jwts
+                .builder()
+                .setId("softtekJWT")
+                .setSubject(username)
+                .claim("authorities",
+                        grantedAuthorities.stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toList()))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 600000))
+                .signWith(SignatureAlgorithm.HS512,
+                        secretKey.getBytes()).compact();
+
+        return "Bearer " + token;
     }
 }
