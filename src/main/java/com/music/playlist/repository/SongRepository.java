@@ -1,14 +1,9 @@
 package com.music.playlist.repository;
 
-import com.music.playlist.model.Playlist;
+import com.music.playlist.entity.Song;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public class SongRepository {
-
-    public List<Playlist> findById(Long songId) {
-        return null;
-    }
+public interface SongRepository extends JpaRepository<Song, Long> {
 }
