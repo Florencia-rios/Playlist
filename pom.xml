@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.music</groupId>
 	<artifactId>playlist</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>playlist</name>
 	<description>Demo for playlist application</description>
 	<properties>
